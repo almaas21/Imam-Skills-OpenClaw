@@ -1,4 +1,4 @@
-<img width="1376" height="768" alt="Virtual Imam" src="https://github.com/user-attachments/assets/0401ce0b-621d-485b-81a1-cf1f44b170d1" /># 🕌 Imam — OpenClaw Skill
+# 🕌 Imam — OpenClaw Skill
 
 A fully-featured virtual Imam for OpenClaw that leads the **five daily Islamic prayers** via voice, delivers **Friday Jumu'ah khutbahs**, and interacts with mussalis (congregants) in **8 languages**.
 
