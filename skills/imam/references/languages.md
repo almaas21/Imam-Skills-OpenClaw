@@ -3,30 +3,65 @@
 Arabic recitations are ALWAYS in Arabic regardless of language setting.  
 Language preference applies to: instructions, translations, announcements, and khutbah body.
 
-## Supported Languages
+## Default TTS: Google Cloud Text-to-Speech
+Free tier: **1 million WaveNet characters/month** — sufficient for all 5 daily prayers + khutbah.
 
-| Code | Language   | Prayer Announcement Example                          |
-|------|------------|------------------------------------------------------|
-| en   | English    | "It is time for Fajr prayer. Let us begin."          |
-| ur   | Urdu       | "فجر کی نماز کا وقت ہو گیا ہے۔ شروع کرتے ہیں۔"     |
-| fr   | French     | "C'est l'heure de la prière Fajr. Commençons."       |
-| tr   | Turkish    | "Sabah namazı vakti geldi. Başlayalım."              |
-| id   | Indonesian | "Sudah waktunya shalat Subuh. Mari kita mulai."      |
-| ms   | Malay      | "Sudah tiba waktu solat Subuh. Jom kita mulakan."    |
-| bn   | Bengali    | "ফজরের নামাজের সময় হয়েছে। শুরু করি।"              |
-| ar   | Arabic     | "حان وقت صلاة الفجر. لنبدأ."                         |
+## Voice Map per Language
+
+| Code | Language   | Google Cloud Voice         | Speaking Rate | Notes                              |
+|------|------------|----------------------------|---------------|------------------------------------||
+| ar   | Arabic     | ar-XA-Wavenet-B            | 0.85          | Deep male, best for prayer/khutbah |
+| en   | English    | en-US-Wavenet-D            | 0.90          | Calm authoritative male            |
+| ur   | Urdu       | ur-IN-Wavenet-B            | 0.88          | Male Urdu voice                    |
+| fr   | French     | fr-FR-Wavenet-D            | 0.90          | Male French voice                  |
+| tr   | Turkish    | tr-TR-Wavenet-B            | 0.90          | Male Turkish voice                 |
+| id   | Indonesian | id-ID-Wavenet-B            | 0.90          | Male Indonesian voice              |
+| ms   | Malay      | ms-MY-Wavenet-B            | 0.90          | Male Malay voice                   |
+| bn   | Bengali    | bn-IN-Wavenet-B            | 0.90          | Male Bengali voice                 |
+
+## SSML Tips for Arabic Recitation
+Use SSML tags for more natural Quranic pacing:
+```xml
+<speak>
+  <prosody rate="slow" pitch="-2st">
+    <lang xml:lang="ar-XA">
+      Allahu Akbar
+    </lang>
+  </prosody>
+  <break time="2s"/>
+  <prosody rate="slow" pitch="-2st">
+    <lang xml:lang="ar-XA">
+      Bismillahir Rahmanir Rahim
+    </lang>
+  </prosody>
+</speak>
+```
 
 ## Language Setting Commands
-- User says: "Switch to Urdu" → set lang=ur
-- User says: "Use English" → set lang=en
-- Default: English (en) if not set
+- User says: "Switch to Urdu" → set lang=ur, switch voice to ur-IN-Wavenet-B
+- User says: "Use English" → set lang=en, switch voice to en-US-Wavenet-D
+- Arabic recitation voice always stays ar-XA-Wavenet-B regardless of instruction language
+- Default: English (en) instructions + Arabic (ar) recitation if not set
 
-## TTS Voice Recommendations (per language)
-- Arabic: Use a voice trained on Quranic recitation (e.g., ar-SA-HamedNeural on Azure TTS)
-- Urdu: ur-PK-AsadNeural
-- English: en-US-GuyNeural (calm, measured tone)
-- French: fr-FR-HenriNeural
-- Turkish: tr-TR-AhmetNeural
-- Indonesian: id-ID-ArdiNeural
-- Malay: ms-MY-OsmanNeural
-- Bengali: bn-BD-NabanitaNeural
+## Fallback Voice Options (if Google Cloud unavailable)
+
+| Provider      | Arabic Voice          | Free Limit                  |
+|---------------|-----------------------|-----------------------------|
+| Puter.js      | ar (Polly engine)     | Unlimited (no key needed)   |
+| Amazon Polly  | Zeina (ar)            | 5M chars/month (12 months)  |
+| Azure Speech  | ar-SA-HamedNeural     | 500K chars/month            |
+| gTTS (Python) | ar                    | Unlimited (unofficial)      |
+
+## gTTS Quick Fallback (Python, no API key)
+```python
+from gtts import gTTS
+import os
+
+def speak(text, lang='ar'):
+    tts = gTTS(text=text, lang=lang, slow=True)
+    tts.save('/tmp/imam_tts.mp3')
+    os.system('mpg321 /tmp/imam_tts.mp3')  # or: afplay / vlc
+
+speak('Allahu Akbar')  # plays audio immediately
+```
+Install: `pip install gTTS mpg321`

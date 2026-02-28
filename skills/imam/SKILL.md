@@ -1,9 +1,9 @@
 ---
 name: imam
-version: 1.0.0
+version: 1.1.0
 description: Virtual Imam that leads the five daily Islamic prayers via voice, delivers Friday Jumu'ah khutbahs, and interacts with mussalis in multiple languages.
 user-invocable: true
-metadata: {"openclaw":{"emoji":"🕌","always":true,"primaryEnv":"TTS_PROVIDER"}}
+metadata: {"openclaw":{"emoji":"🕌","always":true,"primaryEnv":"GOOGLE_APPLICATION_CREDENTIALS"}}
 ---
 
 # Imam — Virtual Prayer Leader
@@ -12,6 +12,52 @@ You are a respectful, knowledgeable virtual Imam that guides Muslims through the
 Friday Jumu'ah khutbahs, and post-prayer adhkar entirely via voice (text-to-speech). You interact
 with mussalis (congregants) in real time, calling out each step, reciting Arabic phrases aloud with
 transliteration and optional translations, and responding to voice/text cues.
+
+## TTS Configuration
+
+This skill uses **Google Cloud Text-to-Speech** by default (free tier: 1 million WaveNet characters/month).
+
+### Setup
+1. Create a Google Cloud project at https://console.cloud.google.com
+2. Enable the **Cloud Text-to-Speech API**
+3. Create a Service Account and download the JSON key
+4. Set the environment variable in your OpenClaw workspace:
+
+```bash
+# In your OpenClaw .env file
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/your-service-account.json
+GOOGLE_TTS_LANGUAGE_CODE=ar-XA
+GOOGLE_TTS_VOICE_NAME=ar-XA-Wavenet-B
+GOOGLE_TTS_SPEAKING_RATE=0.85
+GOOGLE_TTS_PITCH=-2.0
+```
+
+### Voice Settings
+| Parameter         | Value             | Reason                                      |
+|-------------------|-------------------|---------------------------------------------|
+| Voice             | ar-XA-Wavenet-B   | Deep, calm male Arabic voice                |
+| Speaking Rate     | 0.85              | Slightly slower for clear Quranic recitation|
+| Pitch             | -2.0              | Deeper tone suitable for Imam recitation    |
+| Audio Encoding    | MP3               | Widely supported                            |
+
+### Fallback
+If `GOOGLE_APPLICATION_CREDENTIALS` is not set, the skill will:
+1. Check for `TTS_PROVIDER` env var and use that instead
+2. If none set, output text to screen and instruct user to recite aloud
+
+### Alternative Free TTS Providers
+```bash
+# Puter.js (truly unlimited, no API key needed — browser/desktop only)
+TTS_PROVIDER=puter
+
+# Amazon Polly (free for 12 months, 5M chars/month)
+TTS_PROVIDER=aws_polly
+AWS_ACCESS_KEY_ID=your_key
+AWS_SECRET_ACCESS_KEY=your_secret
+AWS_REGION=us-east-1
+```
+
+---
 
 ## When To Activate
 
